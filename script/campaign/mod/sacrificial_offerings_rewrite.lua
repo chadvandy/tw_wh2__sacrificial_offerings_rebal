@@ -3,23 +3,37 @@ sacrificial_offerings_manager = {}
 sacrificial_offerings_manager.__tostring = "SACRIFICIAL OFFERINGS MANAGER"
 sacrificial_offerings_manager.__index = sacrificial_offerings_manager
 
-sacrificial_offerings_manager.settings = {
+sacrificial_offerings_manager.default_settings = {
     max_clamp = 100,    -- highest value for the offerings
     min_clamp = 5,      -- lowest value for the offerings
     result_mod = 1      -- multiplier for the end result
 }
 
-function sacrificial_offerings_manager:change_setting(setting_key, value)
-    if not self.settings[setting_key] then
+function sacrificial_offerings_manager:change_default_setting(setting_key, value)
+    if not self.default_settings[setting_key] then
         -- setting doesn't exist, cancel
         return
     end
 
-    self.settings[setting_key] = value
+    self.default_settings[setting_key] = value
 end
 
-function sacrificial_offerings_manager:setup_faction(faction_key, post_battle_option_key)
-    local settings = self.settings
+function sacrificial_offerings_manager:setup_faction(faction_key, post_battle_option_key, settings)
+    -- if no settings are provided, use full default
+    if not settings then
+        settings = self.default_settings
+    else
+        -- if settings are provided, check that the specific args needed are there; if not, use default value
+        if not settings.max_clamp then
+            settings.max_clamp = self.default_settings.max_clamp
+        end
+        if not settings.min_clamp then
+            settings.min_clamp = self.default_settings.min_clamp
+        end
+        if not settings.result_mod then
+            settings.result_mod = self.default_settings.result_mod
+        end
+    end
 
     -- listener for player only
     if cm:get_local_faction() == faction_key then
