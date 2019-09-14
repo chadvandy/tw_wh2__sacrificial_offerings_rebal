@@ -18,6 +18,25 @@ function sacrificial_offerings_manager:change_default_setting(setting_key, value
     self.default_settings[setting_key] = value
 end
 
+-- allows this mod to work in MP! triggered through the ComponentLClickUp event below, only needed for player UI interaction
+core:add_listener(
+    "SacrificialOfferingsUITrigger",
+    "UITriggerScriptEvent",
+    function(context)
+        return context:trigger():starts_with("sacrificialofferings|")
+    end,
+    function(context)
+        -- etc
+        local str = context:trigger()
+        local data = string.gsub(str, "sacrificialofferings|", "")
+        local sep = string.find(data, "+")
+        local faction_key = string.sub(data, 1, sep - 1)
+        local sacrifice_result = tonumber(string.sub(data, sep + 1))
+        cm:faction_add_pooled_resource(faction_key, "lzd_sacrificial_offerings", "wh2_dlc12_resource_factor_sacrifices_battle", sacrifice_result)
+    end,
+    true
+)
+
 function sacrificial_offerings_manager:setup_faction(faction_key, post_battle_option_key, settings)
     -- if no settings are provided, use full default
     if not settings then
@@ -36,7 +55,7 @@ function sacrificial_offerings_manager:setup_faction(faction_key, post_battle_op
     end
 
     -- listener for player only
-    if cm:get_local_faction() == faction_key then
+    if cm:get_local_faction(true) == faction_key then
         core:add_listener(
             "SacrificialOfferings"..faction_key,
             "PanelOpenedCampaign",
@@ -183,7 +202,7 @@ function sacrificial_offerings_manager:setup_faction(faction_key, post_battle_op
                         end,
                         function(context)
                             -- add on the PR and log it!
-                            cm:faction_add_pooled_resource(faction_key, "lzd_sacrificial_offerings", "wh2_dlc12_resource_factor_sacrifices_battle", sacrifice_result)
+                            CampaignUI.TriggerCampaignScriptEvent(cm:get_faction(faction_key):command_queue_index(), "sacrificialofferings|" .. faction_key .. "+" .. sacrifice_result)
                         end,
                         false
                     )
