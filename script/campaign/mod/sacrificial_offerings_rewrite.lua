@@ -66,7 +66,7 @@ function sacrificial_offerings_manager:setup_faction(faction_key, post_battle_op
             local enemy_faction --: string
 
             for i = 1, cm:pending_battle_cache_num_attackers() do
-                local _, __, faction_name = cm:pending_battle_cache_get_attacker(i)
+                local _, _, faction_name = cm:pending_battle_cache_get_attacker(i)
 
                 if faction_name == faction_key then
                     faction = "attacker"
@@ -75,7 +75,7 @@ function sacrificial_offerings_manager:setup_faction(faction_key, post_battle_op
             end
 
             for i = 1, cm:pending_battle_cache_num_defenders() do
-                local _, __, faction_name = cm:pending_battle_cache_get_defender(i)
+                local _, _, faction_name = cm:pending_battle_cache_get_defender(i)
 
                 if faction_name == faction_key then
                     faction = "defender"
@@ -84,10 +84,10 @@ function sacrificial_offerings_manager:setup_faction(faction_key, post_battle_op
             end
 
             if faction == "defender" then
-                local this_char_cqi, this_mf_cqi, this_faction = cm:pending_battle_cache_get_attacker(1)
+                local _, _, this_faction = cm:pending_battle_cache_get_attacker(1)
                 enemy_faction = this_faction
             elseif faction == "attacker" then
-                local this_char_cqi, this_mf_cqi, this_faction = cm:pending_battle_cache_get_defender(1)
+                local _, _, this_faction = cm:pending_battle_cache_get_defender(1)
                 enemy_faction = this_faction
             end
 
