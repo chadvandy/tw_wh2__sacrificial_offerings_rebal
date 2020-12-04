@@ -21,7 +21,7 @@ end
 -- allows this mod to work in MP! triggered through the ComponentLClickUp event below, only needed for player UI interaction
 core:add_listener(
     "SacrificialOfferingsUITrigger",
-    "UITriggerScriptEvent",
+    "UITrigger",
     function(context)
         return context:trigger():starts_with("sacrificialofferings|")
     end,
@@ -139,7 +139,7 @@ function sacrificial_offerings_manager:setup_faction(faction_key, post_battle_op
     end
 
     -- listener for player only
-    if cm:get_local_faction(true) == faction_key then
+    if cm:get_local_faction_name(true) == faction_key then
 
         -- post battle option UI
         core:add_listener(
@@ -192,7 +192,7 @@ function sacrificial_offerings_manager:setup_faction(faction_key, post_battle_op
             "SacrificialOfferingsODUI"..faction_key,
             "PanelOpenedCampaign",
             function(context)
-                return context.string == "settlement_captured" and cm:get_local_faction(true) == faction_key
+                return context.string == "settlement_captured" and cm:get_local_faction_name(true) == faction_key
             end,
             function(context)
                 -- set the Sacrifical Offerings var
